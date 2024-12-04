@@ -12,6 +12,31 @@ class Board:
         self._add_pieces('white')
         self._add_pieces('black')
 
+    def calc_moves(self, piece, row, col):
+
+        # calculate all the possible (valid) moves.
+
+        def knight_moves():
+            pass
+
+        if isinstance(piece, Pawn):
+            pass
+
+        elif isinstance(piece, Knight):
+            pass
+
+        elif isinstance(piece, Bishop):
+            pass
+
+        elif isinstance(piece, Rook):
+            pass
+
+        elif isinstance(piece, Queen):
+            pass
+
+        elif isinstance(piece, King):
+            pass
+
     def _create(self):
         for row in range(ROWS):
             for col in range(COLS):
