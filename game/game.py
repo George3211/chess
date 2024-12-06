@@ -53,7 +53,7 @@ class Game:
             for move in piece.moves:
 
                 # color
-                color = '#C86464' if (move.final.row + move.final.col) % 2 == 0 else '#C84646'
+                color = '#C86464' if (move.final.row + move.final.col) % 2 == 0 else "#C84646"
 
                 # rect
                 rect = (move.final.col * SQSIZE, move.final.row * SQSIZE, SQSIZE, SQSIZE)

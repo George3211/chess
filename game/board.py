@@ -3,6 +3,7 @@ from square import Square
 from piece import *
 from move import Move
 
+
 class Board:
 
     def __init__(self):
@@ -15,6 +16,27 @@ class Board:
     def calc_moves(self, piece, row, col):
 
         # calculate all the possible (valid) moves.
+
+        def pawn_moves():
+            # steps
+            steps = 1 if piece.moved else 2
+
+            # vertical moves
+            start = row + piece.dir
+            end = row + (piece.dir * (1 * steps))
+
+            for move_row in range(start, end, piece.dir):
+                if Square.in_range(move_row):
+                    if self.squares[move_row][col].isempty():
+                        # create initial and final move squares
+                        initial = Square(row, col)
+                        final = Square(move_row, col)
+
+                        # create a new move
+                        move = Move(initial, final)
+                        piece.add_move(move)
+
+            # diagonal moves
 
         def knight_moves():
             # possible moves
@@ -35,7 +57,6 @@ class Board:
 
                 if Square.in_range(possible_move_row, possible_move_col):
                     if self.squares[possible_move_row][possible_move_col].isempty_or_rival(piece.color):
-
                         # create squares of the new move
 
                         initial = Square(row, col)
@@ -48,10 +69,10 @@ class Board:
                         piece.add_move(move)
 
         if isinstance(piece, Pawn):
-            pass
+            pawn_moves()
 
         elif isinstance(piece, Knight):
-            pass
+            knight_moves()
 
         elif isinstance(piece, Bishop):
             pass
