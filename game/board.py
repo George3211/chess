@@ -1,3 +1,5 @@
+import copy
+
 from const import *
 from square import Square
 from piece import *
@@ -54,6 +56,24 @@ class Board:
     def castling(self, initial, final):
         return abs(initial.col - final.col) == 2
 
+    def in_check(self, piece, move):
+        team_piece = copy.deepcopy(piece)
+        team_board = copy.deepcopy(self)
+        team_board.move(team_piece, move)
+
+        for row in range(ROWS):
+            for col in range(COLS):
+
+                if team_board.squares[row][col].has_enemy_piece(piece.color):
+                    p = team_board.squares[row][col].piece
+                    team_board.calc_moves(p, row, col)
+
+                    for m in p.moves:
+                        if isinstance(m.final.piece, King):
+                            return True
+
+        return False
+
     def calc_moves(self, piece, row, col):
 
         # calculate all the possible (valid) moves.
@@ -76,8 +96,12 @@ class Board:
                         # create a new move
                         move = Move(initial, final)
 
-                        # append new move
-                        piece.add_move(move)
+                        # check potencial checks
+
+                        if not self.in_check(piece, move):
+                            # append new move
+                            piece.add_move(move)
+
                     # blocked
                     else:
                         break
@@ -94,7 +118,9 @@ class Board:
                     if self.squares[possible_move_row][possible_move_col].has_enemy_piece(piece.color):
                         # create initial and final move squares
                         initial = Square(row, col)
-                        final = Square(possible_move_row, possible_move_col)
+
+                        final_piece = self.squares[possible_move_row][possible_move_col].piece
+                        final = Square(possible_move_row, possible_move_col, final_piece)
 
                         # create a new move
                         move = Move(initial, final)
@@ -124,7 +150,9 @@ class Board:
                         # create squares of the new move
 
                         initial = Square(row, col)
-                        final = Square(possible_move_row, possible_move_col)  # piece = piece
+
+                        final_piece = self.squares[possible_move_row][possible_move_col].piece
+                        final = Square(possible_move_row, possible_move_col, final_piece)
 
                         # create new move
                         move = Move(initial, final)
@@ -143,7 +171,9 @@ class Board:
 
                         # create squares of the possible new move
                         initial = Square(row, col)
-                        final = Square(possible_move_row, possible_move_col)
+
+                        final_piece = self.squares[possible_move_row][possible_move_col].piece
+                        final = Square(possible_move_row, possible_move_col, final_piece)
 
                         # create a possible new move
                         move = Move(initial, final)
@@ -154,13 +184,13 @@ class Board:
                             piece.add_move(move)
 
                         # has enemy piece = add move + break
-                        if self.squares[possible_move_row][possible_move_col].has_enemy_piece(piece.color):
+                        elif self.squares[possible_move_row][possible_move_col].has_enemy_piece(piece.color):
                             # append new move
                             piece.add_move(move)
                             break
 
                         # has team piece = break
-                        if self.squares[possible_move_row][possible_move_col].has_team_piece(piece.color):
+                        elif self.squares[possible_move_row][possible_move_col].has_team_piece(piece.color):
                             break
 
                     # not in range
